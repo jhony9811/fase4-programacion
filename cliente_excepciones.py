@@ -19,15 +19,15 @@ class ClienteInvalidoError(Exception):
 def registrar_log(mensaje):
     try:
         ruta = os.path.join(os.path.dirname(__file__), "errores.log")
-    
-    with open(ruta, "a", encoding="utf-8") as archivo:
-        fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        archivo.write(f"[{fecha}] {mensaje}\n")
+        
+        with open(ruta, "a", encoding="utf-8") as archivo:
+           fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+           archivo.write(f"[{fecha}] {mensaje}\n")
 
-    print("LOG guardado en:", ruta)
+        print("LOG guardado en:", ruta)
 
-except Exception as e:
-    print("No se puede guardar el log", e)
+    except Exception as e:
+        print("No se puede guardar el log", e)
 
 # ================================
 # CLASE CLIENTE
@@ -44,17 +44,25 @@ class Cliente:
     # VALIDACIONES
     # ----------------------------
     def validar_nombre(self, nombre):
-        if len(nombre) < 3:
+        if not nombre.strip():
+            raise DatoInvalidoError("El nombre no puede estar vacío.")
+        
+        if len(nombre.strip()) < 3:
             raise DatoInvalidoError("El nombre debe tener mínimo 3 caracteres.")
+        
         return nombre
 
     def validar_identificacion(self, identificacion):
         if not identificacion.isdigit():
             raise ClienteInvalidoError("La identificación solo debe contener números.")
+        
+        if len(identificacion)< 6:
+            raise ClienteInvalidoError("La identificación es demasiado corta.")
+
         return identificacion
 
     def validar_correo(self, correo):
-        if "@" not in correo or "." not in correo or correo.startswith("@":
+        if "@" not in correo or "." not in correo or correo.startswith("@"):
             raise DatoInvalidoError("El correo electrónico no tiene un formato válido.")
         return correo
 
@@ -73,6 +81,11 @@ class Cliente:
         print(f"Correo: {self.correo}")
         print(f"Teléfono: {self.telefono}")
 
+    # ----------------------------
+    # RESUMEN DEL CLIENTE
+    # ----------------------------
+    def resumen(self):
+        return f"{self.nombre} - {self.correo}"
 
 # ================================
 # FUNCIÓN DE PRUEBA
@@ -102,6 +115,7 @@ def probar_clientes():
         else:
             print("CLIENTE REGISTRADO CORRECTAMENTE")
             cliente.mostrar_informacion()
+            print(cliente.resumen())
 
         finally:
             print("Proceso finalizado")
