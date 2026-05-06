@@ -2,3 +2,7 @@
 [2026-05-06 11:51:20] Error con datos ('Carlos', 'ABC123', 'carlos@gmail.com', '3117550699'): La identificación solo debe contener números.
 [2026-05-06 11:51:20] Error con datos ('Ana', '123456789', 'anaemail.com', '3117550699'): El correo electrónico no tiene un formato válido.
 [2026-05-06 11:51:20] Error con datos ('Luis', '123456789', 'luis@gmail.com', '123'): El teléfono debe contener mínimo 7 números.
+[2026-05-06 11:54:00] Error con datos ('Jo', '123456789', 'juan@gmail.com', '3117550699'): El nombre debe tener mínimo 3 caracteres.
+[2026-05-06 11:54:00] Error con datos ('Carlos', 'ABC123', 'carlos@gmail.com', '3117550699'): La identificación solo debe contener números.
+[2026-05-06 11:54:00] Error con datos ('Ana', '123456789', 'anaemail.com', '3117550699'): El correo electrónico no tiene un formato válido.
+[2026-05-06 11:54:00] Error con datos ('Luis', '123456789', 'luis@gmail.com', '123'): El teléfono debe contener mínimo 7 números.
