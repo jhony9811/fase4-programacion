@@ -10,6 +10,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 import os
+import re
 
 # ==========================================================
 # EXCEPCIONES PERSONALIZADAS
@@ -121,15 +122,16 @@ class Cliente(Entidad):
         self,
         identificacion
     ):
-
-        if not identificacion.isdigit():
-
+        try:
+            # Intentamos convertir a entero. Si tiene letras, lanzará ValueError.
+            int(identificacion)
+        except ValueError as error_original:
+            # ENCADENAMIENTO DE EXCEPCIONES (raise ... from ...)
             raise ClienteInvalidoError(
                 "La identificación solo debe contener números."
-            )
+            ) from error_original
 
         if len(identificacion) < 6:
-
             raise ClienteInvalidoError(
                 "La identificación es demasiado corta."
             )
@@ -138,12 +140,10 @@ class Cliente(Entidad):
 
     def validar_correo(self, correo):
 
-        if (
-            "@" not in correo
-            or "." not in correo
-            or correo.startswith("@")
-        ):
-
+        # Patrón estándar para correos electrónicos
+        patron = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+        
+        if not re.match(patron, correo):
             raise DatoInvalidoError(
                 "El correo electrónico no tiene un formato válido."
             )
@@ -152,11 +152,16 @@ class Cliente(Entidad):
 
     def validar_telefono(self, telefono):
 
-        if (
-            not telefono.isdigit()
-            or len(telefono) < 7
-        ):
-
+        try:
+            # Intentamos convertir a entero.
+            int(telefono)
+        except ValueError as error_original:
+            # ENCADENAMIENTO DE EXCEPCIONES
+            raise DatoInvalidoError(
+                "El teléfono solo debe contener números."
+            ) from error_original
+            
+        if len(telefono) < 7:
             raise DatoInvalidoError(
                 "El teléfono debe contener mínimo 7 números."
             )
@@ -488,6 +493,9 @@ def registrar_cliente():
                 registrar_log(
                     f"Error nombre: {error}"
                 )
+            else:
+                break # El else se ejecuta si el try no lanzó ninguna excepción
+                
 
         # ==========================================
         # VALIDAR IDENTIFICACIÓN
@@ -524,6 +532,8 @@ def registrar_cliente():
                     f"Error identificación: "
                     f"{error}"
                 )
+            else:
+                break
 
         # ==========================================
         # VALIDAR CORREO
@@ -536,18 +546,12 @@ def registrar_cliente():
                     "Ingrese correo electrónico: "
                 )
 
-                if (
-                    "@" not in correo
-                    or "." not in correo
-                    or correo.startswith("@")
-                ):
+                patron = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
 
+                if not re.match(patron, correo):
                     raise DatoInvalidoError(
-                        "El correo electrónico "
-                        "no es válido."
-                    )
-
-                break
+                    "El correo electrónico no tiene un formato válido."
+                )
 
             except DatoInvalidoError as error:
 
@@ -556,6 +560,8 @@ def registrar_cliente():
                 registrar_log(
                     f"Error correo: {error}"
                 )
+            else:
+                break
 
         # ==========================================
         # VALIDAR TELÉFONO
@@ -587,6 +593,8 @@ def registrar_cliente():
                 registrar_log(
                     f"Error teléfono: {error}"
                 )
+            else:
+                break
 
         cliente = Cliente(
             nombre,
@@ -1017,6 +1025,92 @@ def cancelar_reserva():
 
 
 # ==========================================================
+# SIMULACIÓN DE 10 OPERACIONES (REQUISITO DE RÚBRICA)
+# ==========================================================
+def simular_operaciones():
+    print("\n" + "="*60)
+    print(" INICIANDO SIMULACIÓN AUTOMÁTICA DE 10 OPERACIONES ")
+    print("="*60)
+
+    # 1. Cliente válido
+    print("\n1. Registrando cliente válido...")
+    try:
+        c1 = Cliente("Juan Perez", "102030", "juan@unad.edu.co", "3001234567")
+        clientes.append(c1)
+        print("Éxito - Cliente creado.")
+    except Exception as e: print(f" Falló: {e}")
+
+    # 2. Cliente inválido (Nombre corto)
+    print("\n2. Registrando cliente con nombre inválido...")
+    try:
+        c2 = Cliente("A", "102030", "a@unad.edu.co", "3001234567")
+    except Exception as e: print(f"Excepción atrapada correctamente: {e}")
+
+    # 3. Cliente inválido (Encadenamiento de excepciones en Identificación)
+    print("\n3. Registrando cliente con identificación no numérica (Encadenamiento)...")
+    try:
+        c3 = Cliente("Maria", "ABCDEF", "maria@unad.edu.co", "3001234567")
+    except Exception as e:
+        print(f"Excepción atrapada: {e}")
+        if e.__cause__:
+            print(f"Causa original de Python atrapada: {e.__cause__}")
+
+    # 4. Cliente inválido (Correo erróneo)
+    print("\n4. Registrando cliente con correo inválido...")
+    try:
+        c4 = Cliente("Carlos", "123456", "carlos.com", "3001234567")
+    except Exception as e: print(f"xcepción atrapada correctamente: {e}")
+
+    # 5. Cliente válido 2
+    print("\n5. Registrando segundo cliente válido...")
+    try:
+        c5 = Cliente("Luisa Gomez", "987654", "luisa@unad.edu.co", "3109876543")
+        clientes.append(c5)
+        print("Éxito - Cliente creado.")
+    except Exception as e: print(f"Falló: {e}")
+
+    # 6. Reserva válida
+    print("\n6. Creando reserva válida para Sala VIP...")
+    try:
+        r1 = Reserva(clientes[0], servicios[0], 5) # 5 horas
+        reservas.append(r1)
+        print("Éxito - Reserva creada.")
+    except Exception as e: print(f"Falló: {e}")
+
+    # 7. Reserva inválida (Duración negativa)
+    print("\n7. Creando reserva con duración negativa...")
+    try:
+        r2 = Reserva(clientes[0], servicios[1], -2)
+    except Exception as e: print(f"Excepción atrapada correctamente: {e}")
+
+    # 8. Confirmar reserva
+    print("\n8. Confirmando reserva...")
+    try:
+        reservas[0].confirmar()
+        print(f"Éxito - Estado actual: {reservas[0].estado}")
+    except Exception as e: print(f"Falló: {e}")
+
+    # 9. Procesar reserva (Sobrecarga/Polimorfismo con impuestos y descuentos)
+    print("\n9. Procesando costos de reserva...")
+    try:
+        costo = reservas[0].procesar(impuesto=0.19, descuento=0.10)
+        print(f"Éxito - Costo total calculado: ${costo:,.0f}")
+    except Exception as e: print(f"Falló: {e}")
+
+    # 10. Procesar reserva cancelada (Manejo de estados)
+    print("\n10. Intentando procesar una reserva cancelada...")
+    try:
+        reservas[0].cancelar()
+        reservas[0].procesar() # Esto debe lanzar error porque ya se canceló
+    except Exception as e: print(f"Excepción atrapada correctamente: {e}")
+
+    print("\n" + "="*60)
+    print(" SIMULACIÓN FINALIZADA - EL PROGRAMA NO SE CAYÓ ")
+    print("="*60)
+
+    input("\nPresione la tecla ENTER para volver al menú principal...")
+
+# ==========================================================
 # MENÚ PRINCIPAL
 # ==========================================================
 def menu():
@@ -1049,6 +1143,8 @@ def menu():
             print("6. Cancelar reserva")
 
             print("7. Salir")
+
+            print("8. Simular operaciones")
 
             opcion = input(
                 "\nSeleccione una opción: "
@@ -1086,13 +1182,15 @@ def menu():
                 print(
                     "\nSaliendo del sistema..."
                 )
-
                 registrar_log(
                     "Sistema finalizado "
                     "correctamente."
                 )
-
                 break
+
+            elif opcion == "8":
+                
+                simular_operaciones()
 
             else:
 

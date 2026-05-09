@@ -25,3 +25,17 @@
 [2026-05-06 21:05:05] Error de valor: invalid literal for int() with base 10: '4 horas'
 [2026-05-06 21:05:35] Reserva creada para Stiven Bermudez
 [2026-05-06 21:05:45] Sistema finalizado correctamente.
+[2026-05-09 12:52:10] Cliente registrado: chrhhs
+[2026-05-09 12:58:39] Cliente registrado: aasdasdasd
+[2026-05-09 12:58:43] Sistema finalizado correctamente.
+[2026-05-09 12:59:05] Error correo: El correo electrónico no tiene un formato válido.
+[2026-05-09 12:59:36] Cliente registrado: sdfsdfdsf
+[2026-05-09 13:02:14] Error teléfono: El teléfono debe contener mínimo 7 números.
+[2026-05-09 13:02:16] Cliente registrado: fsdsdff
+[2026-05-09 13:11:32] Error teléfono: El teléfono debe contener mínimo 7 números.
+[2026-05-09 13:11:34] Cliente registrado: chfhhrhs
+[2026-05-09 13:13:42] Error identificación: La identificación es demasiado corta.
+[2026-05-09 13:13:47] Error identificación: La identificación debe contener solo números.
+[2026-05-09 13:13:56] Cliente registrado: cjrjsosdas
+[2026-05-09 13:38:02] Sistema finalizado correctamente.
+[2026-05-09 13:39:05] Sistema finalizado correctamente.
